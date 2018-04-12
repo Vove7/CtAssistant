@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">CTHelper</string>
+
+    <string name="text_choose_school">选择学校</string>
+    <string name="text_refresh_school">刷新学校</string>
+    <string name="key_has_schools">has_schools</string>
+    <string name="key_old_school">old_school</string>
+    <string name="key_old_code">old_code</string>
+    <string name="text_search_school">查找学校</string>
+    <string name="text_get_sch_err">获取学校失败</string>
+</resources>

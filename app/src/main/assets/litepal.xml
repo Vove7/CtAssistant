@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<litepal>
+    <dbname value="OpenCt" />
+    <version value="1" />
+    <list>
+        <mapping class="cn.vove7.cthelper.openct.model.School" />
+    </list>
+</litepal>
+
