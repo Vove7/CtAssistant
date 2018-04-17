@@ -10,47 +10,48 @@ import android.support.v4.view.ViewPager
 import android.support.v7.app.AppCompatActivity
 import cn.vove7.cthelper.adapter.FragmentAdapter
 import cn.vove7.cthelper.fragments.AyInfoFragment
+import cn.vove7.cthelper.fragments.ClassTableFragment
 import cn.vove7.cthelper.fragments.MainFragment
 import cn.vove7.cthelper.fragments.VerifyTimeTableFragment
-import cn.vove7.cthelper.openct.adapter.SchoolAdapter
 import java.util.*
 
 class MainActivity : AppCompatActivity() {
     private var viewPager: ViewPager? = null
-    private var schoolAdapter: SchoolAdapter? = null
 
     private var colors = intArrayOf(R.color.page_1, R.color.page_2, R.color.page_3, R.color.page_4)
     private var fragments: Array<Fragment?>? = null
     private var mainFragment: MainFragment? = null
     private var ayInfoFragment: AyInfoFragment? = null
-    private var verifyTimeTableFragment = VerifyTimeTableFragment()
+    private var verifyTimeTableFragment: VerifyTimeTableFragment? = null
+    private var classTableFragment: ClassTableFragment? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        schoolAdapter = SchoolAdapter(this)
-        initFragment()
         initView()
+        initFragment()
         requestPermission()
     }
 
     private fun initFragment() {
-        mainFragment = MainFragment(this, schoolAdapter)
+        mainFragment = MainFragment(this, viewPager!!)
 
-        ayInfoFragment = AyInfoFragment(schoolAdapter)
-        fragments = arrayOf(mainFragment, ayInfoFragment, verifyTimeTableFragment)
+        ayInfoFragment = AyInfoFragment(viewPager!!)
+        verifyTimeTableFragment = VerifyTimeTableFragment(viewPager!!)
+        classTableFragment = ClassTableFragment(viewPager!!)
+        fragments = arrayOf(mainFragment, ayInfoFragment, verifyTimeTableFragment, classTableFragment)
+
+        val adapter = FragmentAdapter(
+                supportFragmentManager, Arrays.asList(*fragments ?: arrayOf<Fragment>()))
+        viewPager?.adapter = adapter
     }
 
 
     private fun initView() {
         viewPager = findViewById(R.id.view_pager)
-        val adapter = FragmentAdapter(
-                supportFragmentManager, Arrays.asList(*fragments ?: arrayOf<Fragment>()))
-        viewPager?.adapter = adapter
         viewPager?.setBackgroundColor(`$`(colors[0]))
         //viewPager.setOnTouchListener((view, motionEvent) -> true);
-        mainFragment?.setViewPager(viewPager)
 
         viewPager?.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
             override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
@@ -59,9 +60,9 @@ class MainActivity : AppCompatActivity() {
                 var evaluate = `$`(colors[position]) // 初始默认颜色
 
                 if (position < colors.size - 1) {
+                    evaluate = evaluator// 根据positionOffset和第pos页~第pos+1页的颜色转换范围取颜色值
+                            .evaluate(positionOffset, `$`(colors[position]), `$`(colors[position + 1])) as Int
                 }
-                evaluate = evaluator// 根据positionOffset和第pos页~第pos+1页的颜色转换范围取颜色值
-                        .evaluate(positionOffset, `$`(colors[position]), `$`(colors[position + 1])) as Int
                 viewPager?.setBackgroundColor(evaluate) // 为ViewPager的父容器设置背景色
             }
 
@@ -79,9 +80,7 @@ class MainActivity : AppCompatActivity() {
         super.onBackPressed()
     }
 
-    private fun `$`(cId: Int): Int {
-        return resources.getColor(cId)
-    }
+    private fun `$`(cId: Int): Int = resources.getColor(cId)
 
     private fun requestPermission() {
         val needRequest = ArrayList<String>()

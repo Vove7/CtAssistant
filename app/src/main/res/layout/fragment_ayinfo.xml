@@ -49,6 +49,21 @@
                     android:background="?android:attr/selectableItemBackground"
                     android:text="选择第一周一" />
             </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:gravity="bottom"
+                android:layout_height="match_parent">
+                <Button
+                    android:id="@+id/btn_next"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="17dp"
+                    android:text="next"
+                    android:textColor="#fff"
+                    android:theme="@style/MaterialButton" />
+
+            </LinearLayout>
+
         </LinearLayout>
 
     </android.support.v7.widget.CardView>

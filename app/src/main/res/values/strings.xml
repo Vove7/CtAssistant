@@ -8,4 +8,9 @@
     <string name="key_old_code">old_code</string>
     <string name="text_search_school">查找学校</string>
     <string name="text_get_sch_err">获取学校失败</string>
+    <string name="add_new_node">添加新节点</string>
+    <string name="delete_new_node">删除新节点</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

@@ -7,6 +7,7 @@ import android.graphics.Color
 import android.net.Uri
 import android.provider.CalendarContract
 import android.text.TextUtils
+import cn.vove7.cthelper.R
 import java.util.*
 
 class CalendarHelper(private val context: Context, private val suffix: String) {
@@ -15,8 +16,9 @@ class CalendarHelper(private val context: Context, private val suffix: String) {
         val cursor = context.contentResolver
                 .query(Uri.parse(CALENDAR_URL), null, null, null, null)
         cursor.use { c ->
-            if (c == null)
+            if (c == null) {
                 return -1
+            }
             while (c.moveToNext()) {
                 if (CALENDARS_DISPLAY_NAME + suffix == c.getString(
                                 c.getColumnIndex(CalendarContract.Calendars.CALENDAR_DISPLAY_NAME))) {
@@ -33,8 +35,9 @@ class CalendarHelper(private val context: Context, private val suffix: String) {
         val cursor = context.contentResolver
                 .query(Uri.parse(CALENDAR_URL), null, null, null, null)
         cursor.use { c ->
-            if (c == null)
+            if (c == null) {
                 return accounts
+            }
             while (c.moveToNext()) {
                 if (CALENDARS_DISPLAY_NAME + suffix == c.getString(
                                 c.getColumnIndex(CalendarContract.Calendars.CALENDAR_DISPLAY_NAME))) {
@@ -67,8 +70,9 @@ class CalendarHelper(private val context: Context, private val suffix: String) {
         val cursor = context.contentResolver
                 .query(Uri.parse(CALENDAR_URL), null, null, null, null)
         try {
-            if (cursor == null)
+            if (cursor == null) {
                 return
+            }
             while (cursor.moveToNext()) {
                 if (CALENDARS_DISPLAY_NAME + suffix == cursor.getString(
                                 cursor.getColumnIndex(CalendarContract.Calendars.CALENDAR_DISPLAY_NAME))) {
@@ -113,18 +117,19 @@ class CalendarHelper(private val context: Context, private val suffix: String) {
     //检查是否已经添加了日历账户，如果没有添加先添加一个日历账户
     private fun checkAndAddCalendarAccount(): Long {
         val id = hasOpenCTAccount()
-        return if (id > 0)
+        return if (id > 0) {
             id
-        else
+        } else {
             addOpenCTAccount()
+        }
     }
 
     fun addCalendarEvent(title: String, description: String, beginTime: Long, endTime: Long, isRemind: Boolean): Int {
         // 获取日历账户的id
         val calendarId = checkAndAddCalendarAccount()
-        if (calendarId < 0)
+        if (calendarId < 0) {
             return RESULT_NO_ACCOUNT
-
+        }
 
         val event = ContentValues()
         event.put("title", title)
@@ -135,6 +140,7 @@ class CalendarHelper(private val context: Context, private val suffix: String) {
         event.put(CalendarContract.Events.DTSTART, beginTime + 10000)
         event.put(CalendarContract.Events.DTEND, endTime)
         event.put(CalendarContract.Events.HAS_ALARM, 1)//设置有闹钟提醒
+        event.put(CalendarContract.Events.EVENT_COLOR, randomColor())
         event.put(CalendarContract.Events.EVENT_TIMEZONE, "Asia/Shanghai")  //这个是时区，必须有，
         //添加事件
         val newEvent = context.contentResolver.insert(Uri.parse(CALENDAR_EVENT_URL), event)
@@ -153,6 +159,13 @@ class CalendarHelper(private val context: Context, private val suffix: String) {
         }
         return RESULT_OK
     }
+
+    private fun randomColor(): Int {
+        return context.resources.getColor(colors[(Math.random() * (colors.size - 1)).toInt()])
+
+
+    }
+
 
     fun deleteCalendarEvent(title: String): Boolean {
         val eventCursor = context.contentResolver
@@ -181,15 +194,36 @@ class CalendarHelper(private val context: Context, private val suffix: String) {
         private const val CALENDAR_EVENT_URL = "content://com.android.calendar/events"
         private const val CALENDAR_REMINDER_URL = "content://com.android.calendar/reminders"
 
-        private const val CALENDARS_NAME = "OpenCT"
-        private const val CALENDARS_ACCOUNT_NAME = "openct@gmail.com"
+        private const val CALENDARS_NAME = "CTHelper"
+        private const val CALENDARS_ACCOUNT_NAME = "cthelper@qq.com"
         private const val CALENDARS_ACCOUNT_TYPE = "com.android.exchange"
-        private const val CALENDARS_DISPLAY_NAME = "OpenCT"
+        private const val CALENDARS_DISPLAY_NAME = "CTHelper"
 
         const val RESULT_OK = 0
         const val RESULT_NO_ACCOUNT = 1
         const val RESULT_ADD_FAILED = 2
         const val RESULT_ALARM_FAILED = 3
+
+        val colors = arrayOf(
+                R.color.teal_A700,
+                R.color.brown_800,
+                R.color.orange_A700,
+                R.color.deep_purple_A700,
+                R.color.pink_A400,
+                R.color.red_500,
+                R.color.deep_purple_700,
+                R.color.blue_500,
+                R.color.light_blue_500,
+                R.color.cyan_500,
+                R.color.green_700,
+                R.color.light_green_500,
+                R.color.lime_600,
+                R.color.yellow_A400,
+                R.color.amber_500,
+                R.color.orange_700,
+                R.color.deep_orange_A400,
+                R.color.blue_grey_500
+        )
     }
 
 }

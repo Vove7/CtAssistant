@@ -13,6 +13,7 @@
     <style name="MaterialButton">
         <item name="android:colorControlHighlight">#FAFAFA</item>
         <item name="colorButtonNormal">@color/colorAccent</item>
+        <item name="android:textColor">#fff</item>
         <item name="android:elevation">10dp</item>
     </style>
     <style name="RippleRound">

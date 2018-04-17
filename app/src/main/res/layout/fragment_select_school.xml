@@ -31,10 +31,10 @@
                     android:id="@+id/school_text"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="27dp"
-                    android:layout_marginEnd="8dp"
                     android:layout_marginStart="8dp"
                     android:layout_marginTop="16dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginBottom="27dp"
                     android:focusedByDefault="true"
                     android:text="@string/text_choose_school" />
 
@@ -61,7 +61,7 @@
                     android:orientation="horizontal">
 
                     <Button
-                        android:id="@+id/btn_get"
+                        android:id="@+id/btn_signin"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="17dp"
@@ -117,13 +117,15 @@
                 <android.support.v7.widget.RecyclerView
                     android:id="@+id/school_list_view"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
+                    android:layout_height="match_parent"
+                    android:visibility="gone" />
 
                 <LinearLayout
                     android:id="@+id/refresh_bar"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_centerHorizontal="true">
+                    android:layout_centerHorizontal="true"
+                    android:visibility="gone">
 
                     <ProgressBar
                         style="?android:attr/progressBarStyleHorizontal"
@@ -142,16 +144,13 @@
                     android:layout_centerVertical="true"
                     android:layout_marginTop="200dp"
                     android:gravity="center"
+                    android:visibility="gone"
                     android:orientation="vertical">
-
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/ic_error_black_24dp" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:drawableTop="@drawable/ic_error_black_24dp"
                         android:text="@string/text_get_sch_err" />
                 </LinearLayout>
             </RelativeLayout>

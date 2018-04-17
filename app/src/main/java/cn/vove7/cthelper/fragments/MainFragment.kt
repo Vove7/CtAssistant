@@ -22,63 +22,57 @@ import android.widget.EditText
 import android.widget.TextView
 import cn.vove7.cthelper.R
 import cn.vove7.cthelper.adapter.SchoolListAdapter
-import cn.vove7.cthelper.events.ActionEvent
+import cn.vove7.cthelper.events.ActionEvent.Companion.ACTION_INIT_AY
 import cn.vove7.cthelper.events.NetEvent
 import cn.vove7.cthelper.events.StatusCodes
-import cn.vove7.cthelper.events.Where.WHAT_GET_SUPPORT_SCHOOLS
-import cn.vove7.cthelper.events.Where.WHAT_LOGIN
+import cn.vove7.cthelper.events.WhatRequest.WHAT_GET_SUPPORT_SCHOOLS
+import cn.vove7.cthelper.events.WhatRequest.WHAT_LOGIN
 import cn.vove7.cthelper.interfaces.OnSchoolItemClickListener
 import cn.vove7.cthelper.openct.adapter.SchoolAdapter
 import cn.vove7.cthelper.openct.utils.SPUtil
 import cn.vove7.cthelper.openct.utils.VLog
-import org.greenrobot.eventbus.EventBus
 import java.util.*
 
 /**
  * Choose school,login
  */
-class MainFragment : BaseFragment, View.OnClickListener, View.OnFocusChangeListener {
-
+@SuppressLint("ValidFragment")
+class MainFragment  constructor(context: Context, viewPager: ViewPager)
+    : BaseFragment(viewPager), View.OnClickListener, View.OnFocusChangeListener {
+    internal var view: View? = null
     private var textSno: EditText? = null
     private var textPass: EditText? = null
     private var parent: View? = null
-    internal var view: View? = null
-    internal var viewPager: ViewPager? = null
-    internal var schoolAdapter: SchoolAdapter? = null
-    internal var schoolText: TextView? = null
-    internal var schoolListView: RecyclerView? = null
-    internal var bottomToolbar: Toolbar? = null
-    internal var listAdapter: SchoolListAdapter? = null
-    internal var progressBar: View? = null
-    internal var errLayout: View? = null
+    private var schoolText: TextView? = null
+    private var schoolListView: RecyclerView? = null
+    private var bottomToolbar: Toolbar? = null
+    private var listAdapter: SchoolListAdapter? = null
+    private var progressBar: View? = null
+    private var errLayout: View? = null
+    private var searchView: SearchView? = null
 
-    internal var spUtil: SPUtil? = null
+    var spUtil: SPUtil? = null
 
-    internal var behavior: BottomSheetBehavior<*>? = null
+    var behavior: BottomSheetBehavior<*>? = null
 
-    internal var loginProgressDialog: ProgressDialog? = null
+    var loginProgressDialog: ProgressDialog? = null
 
     val isBottomSheetShowing: Boolean
         get() = behavior?.state != BottomSheetBehavior.STATE_HIDDEN
 
     //学校点击
-    private val listener: OnSchoolItemClickListener = OnSchoolItemClickListener { pos, name ->
-        setSchoolText(name)
-        hideBottom()
+    private val listener = object : OnSchoolItemClickListener {
+        override fun onItemClick(pos: Int, name: String) {
+            setSchoolText(name)
+            hideBottom()
+        }
     }
 
-    constructor() {}
-
-    @SuppressLint("ValidFragment")
-    constructor(context: Context, schoolAdapter: SchoolAdapter?) {
-        this.schoolAdapter = schoolAdapter
-        spUtil = SPUtil(context)
-    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        view = inflater.inflate(R.layout.fragment_select_school, container, false)
         parent = container
+        view = inflater.inflate(R.layout.fragment_select_school, container, false)
         initView()
         initData()
         return view
@@ -88,16 +82,12 @@ class MainFragment : BaseFragment, View.OnClickListener, View.OnFocusChangeListe
         if (b) hideBottom()
     }
 
-    fun setViewPager(viewPager: ViewPager?) {
-        this.viewPager = viewPager
-    }
-
     private fun initView() {
-        textSno = `$`(R.id.text_sno)
+        textSno = f(view, R.id.text_sno)
         textSno!!.onFocusChangeListener = this
-        textPass = `$`(R.id.text_pa)
+        textPass = f(view, R.id.text_pa)
         textPass!!.onFocusChangeListener = this
-        `$`<View>(R.id.btn_get).setOnClickListener(this)
+        f<View>(view, R.id.btn_signin)!!.setOnClickListener(this)
 
         val bottomView = view!!.findViewById<View>(R.id.bottom_sheet)
         behavior = BottomSheetBehavior.from(bottomView)
@@ -106,6 +96,10 @@ class MainFragment : BaseFragment, View.OnClickListener, View.OnFocusChangeListe
         behavior?.setBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
             override fun onStateChanged(bottomSheet: View, newState: Int) {
                 //这里是bottomSheet 状态的改变，根据slideOffset可以做一些动画
+                VLog.d(this, newState.toString())
+                if (newState == BottomSheetBehavior.STATE_HIDDEN) {
+                    searchView?.callOnClick()
+                }
             }
 
             override fun onSlide(bottomSheet: View, slideOffset: Float) {
@@ -114,21 +108,21 @@ class MainFragment : BaseFragment, View.OnClickListener, View.OnFocusChangeListe
             }
         })
 
-        schoolListView = view!!.findViewById(R.id.school_list_view)
+        schoolListView = f(view, R.id.school_list_view)
         schoolListView!!.layoutManager = LinearLayoutManager(context)
-        schoolText = `$`(R.id.school_text)
+        schoolText = f(view, R.id.school_text)
         schoolText!!.setOnClickListener(this)
-        progressBar = view!!.findViewById(R.id.refresh_bar)
-        errLayout = view!!.findViewById(R.id.err_layout)
+        progressBar = f(view, R.id.refresh_bar)
+        errLayout = f(view, R.id.err_layout)
 
-        bottomToolbar = view!!.findViewById(R.id.bottom_toolbar)
+        bottomToolbar = f(view, R.id.bottom_toolbar)
         bottomToolbar!!.inflateMenu(R.menu.menul_bottom_toolbar)
         bottomToolbar!!.setOnMenuItemClickListener({ this.onOptionsItemSelected(it) })
-        bottomToolbar!!.setNavigationOnClickListener { v -> hideBottom() }
+        bottomToolbar!!.setNavigationOnClickListener { _ -> hideBottom() }
         val searchItem = bottomToolbar!!.menu.findItem(R.id.search)
-        val searchView = MenuItemCompat.getActionView(searchItem) as SearchView
+        searchView = MenuItemCompat.getActionView(searchItem) as SearchView
 
-        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+        searchView?.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String): Boolean {
                 return false
             }
@@ -172,9 +166,8 @@ class MainFragment : BaseFragment, View.OnClickListener, View.OnFocusChangeListe
     private fun changeBottomLayout(showIndex: Int) {
         val views = arrayOf(schoolListView, progressBar, errLayout)
 
-        var index = 0
-        for (v in views) {
-            if (showIndex == index++)
+        for ((index, v) in views.withIndex()) {
+            if (showIndex == index)
                 v?.visibility = View.VISIBLE
             else
                 v?.visibility = View.GONE
@@ -184,6 +177,8 @@ class MainFragment : BaseFragment, View.OnClickListener, View.OnFocusChangeListe
 
     private fun initData() {
         //schoolAdapter.setRequestListener(requestListener);
+
+        changeBottomLayout(SHOW_PROCESS)
         schoolAdapter!!.initSupportSchools()
         val schName = spUtil!!.getString(R.string.key_old_school)
         setSchoolText(schName)
@@ -192,7 +187,7 @@ class MainFragment : BaseFragment, View.OnClickListener, View.OnFocusChangeListe
     private fun login() {
         if (schoolAdapter!!.schCode == null) {
             Snackbar.make(view!!, "选择学校", Snackbar.LENGTH_SHORT)
-                    .setAction("Do") { v -> showBottom() }
+                    .setAction("Do") { _ -> showBottom() }
                     .show()
             return
         }
@@ -218,7 +213,7 @@ class MainFragment : BaseFragment, View.OnClickListener, View.OnFocusChangeListe
 
     override fun onClick(view: View) {
         when (view.id) {
-            R.id.btn_get -> {
+            R.id.btn_signin -> {
                 //schoolAdapter.setRequestListener(requestListener);
                 login()
             }
@@ -236,9 +231,6 @@ class MainFragment : BaseFragment, View.OnClickListener, View.OnFocusChangeListe
         behavior?.state = BottomSheetBehavior.STATE_COLLAPSED
     }
 
-    private fun <T : View> `$`(vId: Int): T {
-        return view!!.findViewById(vId)
-    }
 
     override fun onMessageEvent(event: NetEvent) {
         VLog.d(this, " message ----> " + event.message)
@@ -254,7 +246,7 @@ class MainFragment : BaseFragment, View.OnClickListener, View.OnFocusChangeListe
                     }
 
                     viewPager!!.setCurrentItem(1, true)
-                    EventBus.getDefault().post(ActionEvent("ok"))
+                    postActionEvent(ACTION_INIT_AY)
                 } else {
                     Snackbar.make(parent!!, "登陆失败", Snackbar.LENGTH_SHORT).show()
                 }
@@ -282,7 +274,7 @@ class MainFragment : BaseFragment, View.OnClickListener, View.OnFocusChangeListe
     private fun setSchoolText(name: String?) {
         if (name == null)
             return
-        val schCode = SchoolAdapter.supportSchools!![name]?:""
+        val schCode = SchoolAdapter.supportSchools!![name] ?: ""
         VLog.d(this, "school code: -->$schCode")
 
         spUtil!!.setValue(R.string.key_old_school, name)
@@ -296,5 +288,9 @@ class MainFragment : BaseFragment, View.OnClickListener, View.OnFocusChangeListe
         const val SHOW_LIST = 0
         const val SHOW_PROCESS = 1
         const val SHOW_ERR = 2
+    }
+
+    init {
+        spUtil = SPUtil(context)
     }
 }
