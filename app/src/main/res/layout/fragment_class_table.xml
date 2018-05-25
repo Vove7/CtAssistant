@@ -21,10 +21,13 @@
             <TextView
                 android:id="@+id/summary"
                 android:layout_width="match_parent"
+                android:maxHeight="300dp"
                 android:layout_height="wrap_content" />
+
 
             <Button
                 android:id="@+id/add2Calendar"
+                android:text="@string/text_export_to_calendar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:theme="@style/MaterialButton" />

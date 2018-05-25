@@ -1,8 +1,8 @@
 <resources>
-    <string name="app_name">CTHelper</string>
+    <string name="app_name">CtAssistant</string>
 
     <string name="text_choose_school">选择学校</string>
-    <string name="text_refresh_school">刷新学校</string>
+    <string name="text_refresh_data">刷新数据</string>
     <string name="key_has_schools">has_schools</string>
     <string name="key_old_school">old_school</string>
     <string name="key_old_code">old_code</string>
@@ -11,6 +11,10 @@
     <string name="add_new_node">添加新节点</string>
     <string name="delete_new_node">删除新节点</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="text_choose_ay">选择学期</string>
+    <string name="text_choose_base_week">选择第一周一</string>
+    <string name="text_sno">学号</string>
+    <string name="text_pass">密码</string>
+    <string name="text_export_to_calendar">导入日历</string>
+    <string name="text_login">登陆</string>
 </resources>

@@ -3,7 +3,7 @@
     <dbname value="OpenCt" />
     <version value="1" />
     <list>
-        <mapping class="cn.vove7.cthelper.openct.model.School" />
+        <mapping class="cn.vove7.ctassistant.openct.model.School" />
     </list>
 </litepal>
 
