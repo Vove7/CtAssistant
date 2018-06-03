@@ -23,5 +23,14 @@
     <style name="ProgressBarBlue">
         <item name="android:colorAccent">@color/colorPrimary</item>
     </style>
+    <!-- 自定义的Toast动画 -->
+    <style name="Lite.Animation.Toast" parent="@android:style/Animation.Toast">
+        <item name="android:windowEnterAnimation">@anim/toast_in</item>
+        <item name="android:windowExitAnimation">@anim/toast_out</item>
+    </style>
 
+    <style name="BaseDialog" parent="android:Theme.Material.Light.Dialog.NoActionBar">
+        <item name="windowMinWidthMajor">85%</item>
+        <item name="windowMinWidthMinor">80%</item>
+    </style>
 </resources>

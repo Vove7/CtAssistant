@@ -7,9 +7,10 @@ import android.net.Uri
 import android.provider.CalendarContract
 import android.text.TextUtils
 import cn.vove7.ctassistant.R
+import cn.vove7.ctassistant.openct.model.CalendarAccount
 import java.util.*
 
-class CalendarHelper(private val context: Context, private val suffix: String) {
+class CalendarHelper(private val context: Context, private val suffix: String = "") {
 
     private fun hasOpenCTAccount(): Long {
         val cursor = context.contentResolver
@@ -22,7 +23,7 @@ class CalendarHelper(private val context: Context, private val suffix: String) {
             while (c.moveToNext()) {
                 name = c.getString(c.getColumnIndex(CalendarContract.Calendars.CALENDAR_DISPLAY_NAME))
                 VLog.i(this, name)
-                if ((CALENDARS_DISPLAY_NAME + suffix) == name) {
+                if ((CALENDARS_DISPLAY_NAME_PREFIX + suffix) == name) {
                     return c.getLong(c.getColumnIndex(CalendarContract.Calendars._ID))
                 }
             }
@@ -30,8 +31,8 @@ class CalendarHelper(private val context: Context, private val suffix: String) {
         }
     }
 
-    public fun getAllOpenCTAccount(): MutableList<String> {
-        val accounts = mutableListOf<String>()
+    fun getAllOpenCTAccount(): MutableList<CalendarAccount> {
+        val accounts = mutableListOf<CalendarAccount>()
 
         val cursor = context.contentResolver
                 .query(Uri.parse(CALENDAR_URL), null, null, null, null)
@@ -39,60 +40,60 @@ class CalendarHelper(private val context: Context, private val suffix: String) {
             if (c == null) {
                 return accounts
             }
+            val indexName = c.getColumnIndex(CalendarContract.Calendars.CALENDAR_DISPLAY_NAME)
+            val indexId = c.getColumnIndex(CalendarContract.Calendars._ID)
+            var accName: String
+            var id: Long
             while (c.moveToNext()) {
-                if (CALENDARS_DISPLAY_NAME + suffix == c.getString(
-                                c.getColumnIndex(CalendarContract.Calendars.CALENDAR_DISPLAY_NAME))) {
-                    accounts.add(c.getString(c.getColumnIndex(CalendarContract.Calendars.ACCOUNT_NAME)))
+                accName = c.getString(indexName)
+                id = c.getLong(indexId)
+                if (accName.startsWith(CALENDARS_DISPLAY_NAME_PREFIX)) {
+                    accounts.add(CalendarAccount(id, accName))
                 }
             }
             return accounts
         }
     }
 
-
-    fun printAllAccount() {
-        val cursor = context.contentResolver
-                .query(Uri.parse(CALENDAR_URL), null, null, null, null)
-        cursor.use { c ->
-            if (c == null) {
-                VLog.d(this, "printAllAccount: -------null")
-                return
-            }
-            println("****************************************")
-            while (c.moveToNext()) {
-                println(c.getString(c.getColumnIndex(CalendarContract.Calendars.CALENDAR_DISPLAY_NAME)))
-            }
-        }
+    fun deleteCtAccountById(id: Long): Boolean {
+        val uri = ContentUris.withAppendedId(Uri.parse(CALENDAR_URL), id)
+        return 1 == context.contentResolver.delete(uri, null, null)
     }
 
-    fun deleteOpenCtAccount() {
+    fun deleteThisCtAccount() {
+        deleteCtAccountBySuffix(suffix)
+    }
+
+    fun deleteCtAccountBySuffix(suf: String): Boolean {
         val cursor = context.contentResolver
                 .query(Uri.parse(CALENDAR_URL), null, null, null, null)
         cursor.use { cur ->
             if (cur == null) {
-                return
+                return false
             }
             while (cur.moveToNext()) {
                 val name = cur.getString(
                         cur.getColumnIndex(CalendarContract.Calendars.CALENDAR_DISPLAY_NAME))
-                if (CALENDARS_DISPLAY_NAME + suffix == name) {
+                if (CALENDARS_DISPLAY_NAME_PREFIX + suf == name) {
                     val id = cur.getLong(cur.getColumnIndex(CalendarContract.Calendars._ID))
                     val uri = ContentUris.withAppendedId(Uri.parse(CALENDAR_URL), id)
-                    context.contentResolver.delete(uri, null, null)
-                    VLog.d(this, "deleteOpenCtAccount: $id $name")
+                    VLog.d(this, "deleteCtAccountBySuffix: $id $name")
+                    return 1 == context.contentResolver.delete(uri, null, null)
                 }
             }
         }
+        return false
     }
 
-    public fun addOpenCTAccount(): Long {
+    fun addOpenCTAccount(suf: String? = null): Long {
+        val postfix = suf ?: suffix
         val timeZone = TimeZone.getDefault()
         val value = ContentValues()
         value.put(CalendarContract.Calendars.NAME, context.packageName)
 
         value.put(CalendarContract.Calendars.ACCOUNT_NAME, CALENDARS_ACCOUNT_NAME)
         value.put(CalendarContract.Calendars.ACCOUNT_TYPE, CALENDARS_ACCOUNT_TYPE)
-        value.put(CalendarContract.Calendars.CALENDAR_DISPLAY_NAME, CALENDARS_DISPLAY_NAME + suffix)
+        value.put(CalendarContract.Calendars.CALENDAR_DISPLAY_NAME, CALENDARS_DISPLAY_NAME_PREFIX + postfix)
         value.put(CalendarContract.Calendars.VISIBLE, 1)
         value.put(CalendarContract.Calendars.CALENDAR_COLOR, randomColor())
         value.put(CalendarContract.Calendars.CALENDAR_ACCESS_LEVEL, CalendarContract.Calendars.CAL_ACCESS_OWNER)
@@ -116,7 +117,7 @@ class CalendarHelper(private val context: Context, private val suffix: String) {
     fun checkAndAddCalendarAccount(): Long {
         val id = hasOpenCTAccount()
         if (id > 0) {
-            deleteOpenCtAccount()
+            deleteThisCtAccount()
         }
         return addOpenCTAccount()
 
@@ -190,7 +191,7 @@ class CalendarHelper(private val context: Context, private val suffix: String) {
         private const val CALENDARS_NAME = "CTHelper"
         private const val CALENDARS_ACCOUNT_NAME = "cthelper@qq.com"
         private const val CALENDARS_ACCOUNT_TYPE = "LOCAL"
-        private const val CALENDARS_DISPLAY_NAME = "CT-"
+        private const val CALENDARS_DISPLAY_NAME_PREFIX = "CT-"
 
         const val RESULT_OK = 0
         const val RESULT_NO_ACCOUNT = 1

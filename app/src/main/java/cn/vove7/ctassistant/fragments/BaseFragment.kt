@@ -7,6 +7,7 @@ import android.support.design.widget.Snackbar
 import android.support.v4.app.Fragment
 import android.support.v4.view.ViewPager
 import android.support.v7.widget.Toolbar
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,6 +19,7 @@ import cn.vove7.ctassistant.events.ActionEvent
 import cn.vove7.ctassistant.events.NetEvent
 import cn.vove7.ctassistant.interfaces.OnBottomItemClickListener
 import cn.vove7.ctassistant.openct.adapter.SchoolAdapter
+import cn.vove7.ctassistant.view.VToast
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
@@ -42,7 +44,13 @@ abstract class BaseFragment(var viewPager: ViewPager) : Fragment(), OnBottomItem
     override fun onCreate(savedInstanceState: Bundle?) {
         registerEvent()
         super.onCreate(savedInstanceState)
+        initToast()
         schoolAdapter = VApplication.instance.schoolAdapter
+    }
+
+    @SuppressLint("ShowToast")
+    private fun initToast() {
+        toast = VToast.with(context!!).top()
     }
 
     private fun registerEvent() {
@@ -142,6 +150,16 @@ abstract class BaseFragment(var viewPager: ViewPager) : Fragment(), OnBottomItem
             bar.setAction("DO", listener)
         }
         bar.show()
+    }
+
+    private lateinit var toast: VToast
+
+    fun toast(textRes: Int) {
+        toast(getString(textRes))
+    }
+
+    fun toast(msg: String) {
+        toast.showShort(msg)
     }
 
     fun <T : View> f(v: View, id: Int): T {

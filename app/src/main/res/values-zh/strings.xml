@@ -1,16 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">CtAssistant</string>
-
     <string name="text_choose_school">选择学校</string>
     <string name="text_refresh_data">刷新数据</string>
-    <string name="key_has_schools">has_schools</string>
-    <string name="key_old_school">old_school</string>
-    <string name="key_old_code">old_code</string>
     <string name="text_search_school">查找学校</string>
     <string name="text_get_sch_err">获取学校失败</string>
     <string name="add_new_node">添加新节点</string>
     <string name="delete_new_node">删除新节点</string>
-
     <string name="text_choose_ay">选择学期</string>
     <string name="text_choose_base_week">选择第一周一</string>
     <string name="text_sno">学号</string>
@@ -22,4 +17,5 @@
     <string name="text_confirmation_of_del_ct_account">确认删除日历账户: %s ?</string>
     <string name="text_del_failed">删除失败</string>
     <string name="text_del_success">删除成功</string>
+    <string name="app_name">CtAssistant</string>
 </resources>

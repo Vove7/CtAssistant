@@ -107,3 +107,9 @@ class Time(var hour: Int, var minute: Int/*, val second: Int*/) {
     }
 
 }
+
+class CalendarAccount(val id: Long, val accName: String){
+    override fun toString(): String {
+        return "CalendarAccount(id=$id, accName='$accName')"
+    }
+}
