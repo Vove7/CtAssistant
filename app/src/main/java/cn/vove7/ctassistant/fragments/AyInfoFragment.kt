@@ -9,7 +9,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
+import android.widget.Toast
 import cn.vove7.ctassistant.R
+import cn.vove7.ctassistant.VApplication
 import cn.vove7.ctassistant.events.ActionEvent
 import cn.vove7.ctassistant.events.ActionEvent.Companion.ACTION_GET_TT
 import cn.vove7.ctassistant.events.ActionEvent.Companion.ACTION_INIT_AY
@@ -33,7 +35,6 @@ class AyInfoFragment(viewPager: ViewPager) : BaseFragment(viewPager), View.OnCli
     private lateinit var ayButton: Button
     var academicYears: Array<AcademicYear>? = null
     private lateinit var baseDate: TextView
-
     private var ayList = ArrayList<String>()
 
 

@@ -9,5 +9,5 @@ object UrlUtils {
     const val URL_GET_AY_INFO = URL_BASE + "getAyInfo"
     const val URL_GET_BASE_WEEK = URL_BASE + "getDateOfBaseWeek"
     const val URL_GET_TIME_TABLE = URL_BASE + "getTimeTable"
-
+    const val URL_POST_APPLY_ADAPTER = URL_BASE + "postApplyAdapter"
 }

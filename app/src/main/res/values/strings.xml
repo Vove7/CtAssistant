@@ -17,4 +17,11 @@
     <string name="text_pass">密码</string>
     <string name="text_export_to_calendar">导入日历</string>
     <string name="text_login">登陆</string>
+    <string name="text_apply_adapter">申请适配</string>
+    <string name="text_sub_apply_adapter">请仔细填写以下信息，方便我们对你的学校进行适配。</string>
+    <string name="text_apply_adapter_school_name">学校全称</string>
+    <string name="text_apply_adapter_school_website">学校官网</string>
+    <string name="text_apply_adapter_school_test_account">测试账号</string>
+    <string name="text_apply_adapter_school_test_password">测试账号密码</string>
+    <string name="text_apply_adapter_school_submit">提交信息</string>
 </resources>

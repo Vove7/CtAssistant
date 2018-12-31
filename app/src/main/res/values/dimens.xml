@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="apply_adapter_text_font_40dp">40dp</dimen>
+    <dimen name="apply_adapter_text_font_30dp">30dp</dimen>
+    <dimen name="apply_adapter_text_font_25dp">25dp</dimen>
+    <dimen name="dimen25dp">25dp</dimen>
+    <dimen name="dimen30dp">30dp</dimen>
+    <dimen name="dimen35dp">35dp</dimen>
+    <dimen name="dimen20dp">20dp</dimen>
+    <dimen name="dimen15dp">15dp</dimen>
+    <dimen name="dimen10dp">10dp</dimen>
+    <dimen name="dimen5dp">5dp</dimen>
+    <dimen name="dimen3dp">3dp</dimen>
+</resources>

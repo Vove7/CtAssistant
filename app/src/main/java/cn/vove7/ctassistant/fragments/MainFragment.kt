@@ -4,6 +4,7 @@ package cn.vove7.ctassistant.fragments
 import android.annotation.SuppressLint
 import android.app.ProgressDialog
 import android.content.Context
+import android.content.Intent
 import android.os.Handler
 import android.support.design.widget.BottomSheetBehavior
 import android.support.v4.view.MenuItemCompat
@@ -13,7 +14,10 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.EditText
 import android.widget.TextView
+import android.widget.Toast
+import cn.vove7.ctassistant.ApplyAdapterActivity
 import cn.vove7.ctassistant.R
+import cn.vove7.ctassistant.VApplication
 import cn.vove7.ctassistant.events.ActionEvent
 import cn.vove7.ctassistant.events.ActionEvent.Companion.ACTION_INIT_AY
 import cn.vove7.ctassistant.events.EventUtils.postActionEvent
@@ -98,7 +102,7 @@ class MainFragment constructor(context: Context, viewPager: ViewPager)
     }
 
     private fun querySchool(query: String) {
-        val schools = ArrayList(SchoolAdapter.supportSchools!!.keys)
+        val schools = ArrayList((SchoolAdapter.supportSchools?: hashMapOf()).keys)
         var result = ArrayList<String>()
         if (query.trim { it <= ' ' } == "") {
             result = schools
@@ -118,6 +122,10 @@ class MainFragment constructor(context: Context, viewPager: ViewPager)
                 changeBottomLayout(SHOW_PROCESS)
                 Handler().postDelayed(
                         { schoolAdapter.requestSchools() }, 500)
+            }
+            R.id.applyAdapter->{
+               // Toast.makeText(VApplication.instance.applicationContext,"applyAdapter", Toast.LENGTH_SHORT).show();
+                startActivity(Intent(VApplication.instance.applicationContext, ApplyAdapterActivity::class.java))
             }
         }
         return super.onOptionsItemSelected(item)
