@@ -74,7 +74,7 @@ class SchoolAdapter(private val context: Context) {
     }
 
     private fun readFromDatabase() {
-        supportSchools = HashMap()
+        supportSchools = hashMapOf()
         val schools = LitePal.findAll(School::class.java)
         for (school in schools) {
             val info = LitePal.where("school_id=?", school.id.toString()).findFirst(SchoolInfo::class.java)

@@ -4,9 +4,7 @@ import cn.vove7.ctassistant.BuildConfig
 
 object UrlUtils {
     //    private const val URL_BASE = "http://10.0.0.2:5000/"
-    private val URL_BASE = if (BuildConfig.DEBUG)
-        "http://192.168.2.124:5000/"
-    else "http://118.89.112.146:5000/"
+    private val URL_BASE = "http://118.89.112.146:5000/"
 
     val URL_GET_CT = URL_BASE + "getClassTable"
     val URL_LOGIN = URL_BASE + "login"
