@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <litepal>
-    <dbname value="OpenCt" />
+    <dbname value="CtAssistant" />
     <version value="1" />
     <list>
-        <mapping class="cn.vove7.ctassistant.openct.model.School" />
+        <mapping class="cn.vove7.ctassistant.cthelper.model.School" />
+        <mapping class="cn.vove7.ctassistant.cthelper.model.SchoolInfo" />
     </list>
 </litepal>
 

@@ -16,6 +16,7 @@ class VToast(val context: Context) {
     private val isShow = false
     private lateinit var toast: Toast
     @SuppressLint("ShowToast")
+
     fun init(): VToast {
         toast = Toast.makeText(context, "", Toast.LENGTH_SHORT)!!
         val inflate = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
@@ -27,8 +28,7 @@ class VToast(val context: Context) {
             if (mTN != null) {
                 val mParams = getField(mTN, "mParams")
                 if (mParams != null && mParams is WindowManager.LayoutParams) {
-                    val params = mParams as WindowManager.LayoutParams
-                    params.windowAnimations = R.style.Lite_Animation_Toast
+                    mParams.windowAnimations = R.style.Lite_Animation_Toast
                 }
             }
         } catch (e: Exception) {

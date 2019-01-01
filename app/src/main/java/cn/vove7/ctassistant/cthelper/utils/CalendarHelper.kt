@@ -1,4 +1,4 @@
-package cn.vove7.ctassistant.openct.utils
+package cn.vove7.ctassistant.cthelper.utils
 
 import android.content.ContentUris
 import android.content.ContentValues
@@ -7,9 +7,12 @@ import android.net.Uri
 import android.provider.CalendarContract
 import android.text.TextUtils
 import cn.vove7.ctassistant.R
-import cn.vove7.ctassistant.openct.model.CalendarAccount
+import cn.vove7.ctassistant.cthelper.model.CalendarAccount
 import java.util.*
 
+/**
+ * 安卓日历事件
+ */
 class CalendarHelper(private val context: Context, private val suffix: String = "") {
 
     private fun hasOpenCTAccount(): Long {
@@ -22,7 +25,7 @@ class CalendarHelper(private val context: Context, private val suffix: String = 
             var name: String
             while (c.moveToNext()) {
                 name = c.getString(c.getColumnIndex(CalendarContract.Calendars.CALENDAR_DISPLAY_NAME))
-                VLog.i(this, name)
+                Vog.i(this, name)
                 if ((CALENDARS_DISPLAY_NAME_PREFIX + suffix) == name) {
                     return c.getLong(c.getColumnIndex(CalendarContract.Calendars._ID))
                 }
@@ -77,7 +80,7 @@ class CalendarHelper(private val context: Context, private val suffix: String = 
                 if (CALENDARS_DISPLAY_NAME_PREFIX + suf == name) {
                     val id = cur.getLong(cur.getColumnIndex(CalendarContract.Calendars._ID))
                     val uri = ContentUris.withAppendedId(Uri.parse(CALENDAR_URL), id)
-                    VLog.d(this, "deleteCtAccountBySuffix: $id $name")
+                    Vog.d(this, "deleteCtAccountBySuffix: $id $name")
                     return 1 == context.contentResolver.delete(uri, null, null)
                 }
             }
@@ -85,6 +88,9 @@ class CalendarHelper(private val context: Context, private val suffix: String = 
         return false
     }
 
+    /**
+     * 添加日历账户
+     */
     fun addOpenCTAccount(suf: String? = null): Long {
         val postfix = suf ?: suffix
         val timeZone = TimeZone.getDefault()
@@ -133,7 +139,7 @@ class CalendarHelper(private val context: Context, private val suffix: String = 
 
         event.put(CalendarContract.Events.DTSTART, beginTime + 10000)
         event.put(CalendarContract.Events.DTEND, endTime)
-        event.put(CalendarContract.Events.HAS_ALARM, if (isAlarm) 1 else 0)//设置有闹钟提醒
+        event.put(CalendarContract.Events.HAS_ALARM, if (isAlarm) 1 else 0) //设置有闹钟提醒
         event.put(CalendarContract.Events.EVENT_COLOR, randomColor())
         event.put(CalendarContract.Events.EVENT_TIMEZONE, "Asia/Shanghai")  //这个是时区，必须有
         //添加事件
@@ -188,7 +194,6 @@ class CalendarHelper(private val context: Context, private val suffix: String = 
         private const val CALENDAR_EVENT_URL = "content://com.android.calendar/events"
         private const val CALENDAR_REMINDER_URL = "content://com.android.calendar/reminders"
 
-        private const val CALENDARS_NAME = "CTHelper"
         private const val CALENDARS_ACCOUNT_NAME = "cthelper@qq.com"
         private const val CALENDARS_ACCOUNT_TYPE = "LOCAL"
         private const val CALENDARS_DISPLAY_NAME_PREFIX = "CT-"

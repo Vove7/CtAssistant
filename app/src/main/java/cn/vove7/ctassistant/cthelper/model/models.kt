@@ -1,6 +1,10 @@
-package cn.vove7.ctassistant.openct.model
+package cn.vove7.ctassistant.cthelper.model
 
-import cn.vove7.ctassistant.openct.utils.Utils
+import android.graphics.Paint
+import cn.vove7.ctassistant.cthelper.utils.Utils
+import cn.vove7.vtp.log.Vog
+import com.bin.david.form.annotation.SmartColumn
+import com.bin.david.form.annotation.SmartTable
 import java.util.*
 
 class AcademicYear {
@@ -11,6 +15,15 @@ class AcademicYear {
 
     val code: String
         get() = year.toString() + termCode.toString()
+
+    constructor(year: Int, termCode: Int, name: String) {
+        this.year = year
+        this.termCode = termCode
+        this.name = name
+    }
+
+    constructor()
+
 
     override fun equals(other: Any?): Boolean {
         if (other == null)
@@ -27,8 +40,35 @@ class AcademicYear {
     }
 }
 
-class ClassInfo(val teacher: String, val weeks: Array<Int>, val className: String, val classRoom: String, val node: Array<Int>//节数
-                , val week: Int) {
+@SmartTable(name = "课表")
+class ClassInfo {
+    @SmartColumn(id = 1, name = "课程")
+    val className: String = ""
+    @SmartColumn(id = 2, name = "教师")
+    val teacher: String = ""
+    @SmartColumn(id = 5, name = "教室")
+    val classRoom: String = ""
+    @SmartColumn(id = 6, name = "周", align = Paint.Align.CENTER)
+    val week: Int = 0//节数
+    val weeks: Array<Int> = arrayOf()
+    val node: Array<Int> = arrayOf()
+    @SmartColumn(id = 4, name = "节数", align = Paint.Align.RIGHT)
+    private var nodeStr: String = ""
+        get() {
+            val s = Arrays.toString(node)
+            return s.substring(1, s.length - 1)
+        }
+    @SmartColumn(id = 3, name = "周数", align = Paint.Align.RIGHT)
+    private var weeksStr: String = ""
+        get() {
+            val s = Arrays.toString(weeks)
+            return s.substring(1, s.length - 1)
+        }
+
+    init {
+        Vog.d(this, "init ---> $weeksStr")
+        Vog.d(this, "init ---> $nodeStr")
+    }
 
     override fun toString(): String {
         return "ClassInfo{" +
@@ -108,7 +148,7 @@ class Time(var hour: Int, var minute: Int/*, val second: Int*/) {
 
 }
 
-class CalendarAccount(val id: Long, val accName: String){
+class CalendarAccount(val id: Long, val accName: String) {
     override fun toString(): String {
         return "CalendarAccount(id=$id, accName='$accName')"
     }

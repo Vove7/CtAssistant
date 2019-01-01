@@ -1,9 +1,11 @@
 package cn.vove7.ctassistant.fragments
 
-
 import android.annotation.SuppressLint
+import android.app.AlertDialog
 import android.app.ProgressDialog
 import android.content.Context
+import android.content.DialogInterface
+import android.content.Intent
 import android.os.Handler
 import android.support.design.widget.BottomSheetBehavior
 import android.support.v4.view.MenuItemCompat
@@ -13,7 +15,16 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.EditText
 import android.widget.TextView
+import cn.vove7.ctassistant.ApplyAdapterActivity
 import cn.vove7.ctassistant.R
+import cn.vove7.ctassistant.VApplication
+import cn.vove7.ctassistant.adapter.AccountListAdapter
+import cn.vove7.ctassistant.cthelper.adapter.SchoolAdapter
+import cn.vove7.ctassistant.cthelper.model.CalendarAccount
+import cn.vove7.ctassistant.cthelper.utils.CalendarHelper
+import cn.vove7.ctassistant.cthelper.utils.SPUtil
+import cn.vove7.ctassistant.cthelper.utils.Vog
+import cn.vove7.ctassistant.dialog.DialogWithList
 import cn.vove7.ctassistant.events.ActionEvent
 import cn.vove7.ctassistant.events.ActionEvent.Companion.ACTION_INIT_AY
 import cn.vove7.ctassistant.events.EventUtils.postActionEvent
@@ -21,9 +32,6 @@ import cn.vove7.ctassistant.events.NetEvent
 import cn.vove7.ctassistant.events.StatusCodes
 import cn.vove7.ctassistant.events.WhatRequest.WHAT_GET_SUPPORT_SCHOOLS
 import cn.vove7.ctassistant.events.WhatRequest.WHAT_LOGIN
-import cn.vove7.ctassistant.openct.adapter.SchoolAdapter
-import cn.vove7.ctassistant.openct.utils.SPUtil
-import cn.vove7.ctassistant.openct.utils.VLog
 import java.util.*
 
 /**
@@ -67,7 +75,7 @@ class MainFragment constructor(context: Context, viewPager: ViewPager)
             override fun onStateChanged(bottomSheet: View, newState: Int) {
                 //这里是bottomSheet 状态的改变，根据slideOffset可以做一些动画
                 if (newState == BottomSheetBehavior.STATE_HIDDEN) {
-                    VLog.d(this, newState.toString())
+                    Vog.d(this, newState.toString())
 
                 }
             }
@@ -89,7 +97,7 @@ class MainFragment constructor(context: Context, viewPager: ViewPager)
             }
 
             override fun onQueryTextChange(newText: String): Boolean {
-                VLog.d(this, "onQueryTextChange ----> $newText")
+                Vog.d(this, "onQueryTextChange ----> $newText")
                 querySchool(newText)
 
                 return false
@@ -114,10 +122,11 @@ class MainFragment constructor(context: Context, viewPager: ViewPager)
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when (item!!.itemId) {
-            R.id.refresh_icon -> {
+            R.id.menu_refresh -> {
                 changeBottomLayout(SHOW_PROCESS)
                 Handler().postDelayed(
                         { schoolAdapter.requestSchools() }, 500)
+                return true
             }
             R.id.applyAdapter->{
                // Toast.makeText(VApplication.instance.applicationContext,"applyAdapter", Toast.LENGTH_SHORT).show();
@@ -178,14 +187,14 @@ class MainFragment constructor(context: Context, viewPager: ViewPager)
             AlertDialog.Builder(context)
                     .setTitle(getString(R.string.text_ask_confirmation_of_delete))
                     .setMessage(String.format(getString(R.string.text_confirmation_of_del_ct_account), account.accName))
-                    .setPositiveButton(R.string.text_confirm, { d, _ ->
+                    .setPositiveButton(R.string.text_confirm) { d, _ ->
                         if (calendarHandler.deleteCtAccountById(account.id)) {
                             aList.removeAt(pos)
                             accountListAdapter.notifyDataSetChanged()
                             toast(R.string.text_del_success)
                         } else toast(R.string.text_del_failed)
                         d.dismiss()
-                    }).show()
+                    }.show()
         }
     }
     lateinit var accountListAdapter: AccountListAdapter
@@ -197,6 +206,7 @@ class MainFragment constructor(context: Context, viewPager: ViewPager)
         accountListAdapter = AccountListAdapter(context!!, aList, delListener)
         val dialog = DialogWithList(context!!, accountListAdapter)
         dialog.setTitle("账户管理")
+        dialog.setWidth(0.9)
         dialog.setButton(DialogInterface.BUTTON_POSITIVE, "DONE", View.OnClickListener { dialog.dismiss() })
         dialog.setButton(DialogInterface.BUTTON_NEUTRAL, "ADD TEST",
                 View.OnClickListener {
@@ -206,7 +216,7 @@ class MainFragment constructor(context: Context, viewPager: ViewPager)
                     dialog.notifyDataChanged()
                 })
         dialog.show()
-        VLog.d(this, aList.toString())
+        Vog.d(this, aList.toString())
     }
 
     override fun onActionEvent(event: ActionEvent) {
@@ -214,7 +224,7 @@ class MainFragment constructor(context: Context, viewPager: ViewPager)
     }
 
     override fun onNetEvent(event: NetEvent) {
-        VLog.d(this, " message ----> " + event.message)
+        Vog.d(this, " message ----> " + event.message)
         when (event.what) {
             WHAT_LOGIN -> {
                 closeProgressDialog()
@@ -234,12 +244,12 @@ class MainFragment constructor(context: Context, viewPager: ViewPager)
             }
             WHAT_GET_SUPPORT_SCHOOLS -> {
                 if (event.statusCode == StatusCodes.STATUS_OK) {
-                    VLog.d(this, "onRequestSuccess: 学校获取ok -> " + SchoolAdapter.supportSchools!!)
+                    Vog.d(this, "onRequestSuccess: 学校获取ok -> " + SchoolAdapter.supportSchools!!)
                     val schools = ArrayList(SchoolAdapter.supportSchools!!.keys)
                     setBottomListData(schools)
                     changeBottomLayout(SHOW_LIST)
                 } else {
-                    VLog.d(this, "onRequestFailed: 学校获取失败")
+                    Vog.d(this, "onRequestFailed: 学校获取失败")
                     changeBottomLayout(SHOW_ERR)
                 }
             }
@@ -248,8 +258,8 @@ class MainFragment constructor(context: Context, viewPager: ViewPager)
 
 
     private fun setSchoolText(name: String) {
-        val schCode = SchoolAdapter.supportSchools!![name] ?: ""
-        VLog.d(this, "school code: -->$schCode")
+        val schCode = SchoolAdapter.supportSchools!![name]?.schoolCode ?: ""
+        Vog.d(this, "school code: -->$schCode")
 
         spUtil.setValue(R.string.key_old_school, name)
         spUtil.setValue(R.string.key_old_code, schCode)

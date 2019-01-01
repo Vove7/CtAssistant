@@ -20,8 +20,8 @@ import cn.vove7.ctassistant.events.NetEvent
 import cn.vove7.ctassistant.events.StatusCodes.STATUS_OK
 import cn.vove7.ctassistant.events.WhatRequest.WHAT_GET_BASE_WEEK
 import cn.vove7.ctassistant.events.WhatRequest.WHAT_INIT_AY
-import cn.vove7.ctassistant.openct.model.AcademicYear
-import cn.vove7.ctassistant.openct.utils.VLog
+import cn.vove7.ctassistant.cthelper.model.AcademicYear
+import cn.vove7.ctassistant.cthelper.utils.Vog
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 import java.util.*
@@ -57,7 +57,7 @@ class AyInfoFragment(viewPager: ViewPager) : BaseFragment(viewPager), View.OnCli
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when (item?.itemId) {
-            R.id.refresh_icon->{
+            R.id.menu_refresh->{
                 changeBottomLayout(SHOW_PROCESS)
                 schoolAdapter.initAcademicYearInfo()
             }
@@ -74,7 +74,7 @@ class AyInfoFragment(viewPager: ViewPager) : BaseFragment(viewPager), View.OnCli
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     override fun onNetEvent(event: NetEvent) {
-        VLog.d(this, "get NetEvent message ----> " + event.message)
+        Vog.d(this, "get NetEvent message ----> " + event.message)
         when (event.what) {
             WHAT_INIT_AY -> {
                 if (event.statusCode == STATUS_OK) {
@@ -90,7 +90,7 @@ class AyInfoFragment(viewPager: ViewPager) : BaseFragment(viewPager), View.OnCli
                     changeBottomLayout(SHOW_LIST)
 
                 } else {
-                    VLog.d(this, "  ----> 获取学期信息失败")
+                    Vog.d(this, "  ----> 获取学期信息失败")
 //                    showSnack("获取学期信息失败")
                     changeBottomLayout(SHOW_ERR)
                 }
@@ -107,7 +107,7 @@ class AyInfoFragment(viewPager: ViewPager) : BaseFragment(viewPager), View.OnCli
     }
 
     override fun onActionEvent(event: ActionEvent) {
-        VLog.d(this, " ActionEvent action ----> " + event.action)
+        Vog.d(this, " ActionEvent action ----> " + event.action)
         if (ACTION_INIT_AY == event.action) {
             schoolAdapter.initAcademicYearInfo()
         }

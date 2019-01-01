@@ -1,7 +1,6 @@
-package cn.vove7.ctassistant.openct.model
+package cn.vove7.ctassistant.cthelper.model
 
-import android.annotation.SuppressLint
-import cn.vove7.ctassistant.openct.utils.VLog
+import cn.vove7.ctassistant.cthelper.utils.Vog
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -14,7 +13,7 @@ class ClassTableModel(var classTable: Array<ClassInfo>) : BaseReturnMessage()
 class AyInfoModel(val currentAy: AcademicYear, val allAy: Array<AcademicYear>)
     : BaseReturnMessage()
 
-class SupportSchoolModel(val supportSchools: MutableMap<String, String>) : BaseReturnMessage()
+class SupportSchoolModel(val supportSchools: MutableMap<String, SchoolInfo>) : BaseReturnMessage()
 
 class BaseWeekModel(var dateOfBaseWeek: String) : BaseReturnMessage() {
     fun getBaseWeek(): Calendar {
@@ -23,10 +22,8 @@ class BaseWeekModel(var dateOfBaseWeek: String) : BaseReturnMessage() {
         cal.clear()
         cal.set(n[0].toInt(), n[1].toInt() - 1, n[2].toInt()
                 , 0, 0, 0)
-//        cal.set(2018, 2, 5
-//                , 0, 0, 0)
         cal.set(Calendar.MILLISECOND, 0)
-        VLog.d(this, SimpleDateFormat().format(cal.time))
+        Vog.d(this, SimpleDateFormat().format(cal.time))
         return cal
     }
 }

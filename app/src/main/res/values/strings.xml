@@ -29,4 +29,20 @@
     <string name="text_apply_adapter_school_test_account">测试账号</string>
     <string name="text_apply_adapter_school_test_password">测试账号密码</string>
     <string name="text_apply_adapter_school_submit">提交信息</string>
+    <string name="text_help">帮助</string>
+    <string name="key_school_adapter_hint">如果想要适配你的学校，可以选择下方GITHUB选项，为你的学校适配 </string>
+    <string name="key_school_adapter_hint_title">没有找到你的学校? </string>
+    <string name="github_ct_server">https://github.com/Vove7/CtAssistant_Server</string>
+    <string name="begin_import">开始导入</string>
+    <string name="text_running">正在运行</string>
+    <string name="text_get_success">获取成功</string>
+    <string name="text_get_failed">获取失败</string>
+    <string name="text_geting_the_classtable">正在获取课表...</string>
+    <string name="text_add_success">添加完成</string>
+    <string name="text_add_failed">添加失败</string>
+    <string name="text_calendar_account_create_failed">日历账户创建失败</string>
+    <string name="text_unknow_error">未知错误</string>
+    <string name="sample_ct">低等数学@教室</string>
+    <string name="tsno">151404060111</string>
+    <string name="tpass">V7131400</string>
 </resources>

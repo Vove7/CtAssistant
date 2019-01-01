@@ -4,15 +4,21 @@ import android.app.Dialog
 import android.content.Context
 import android.content.DialogInterface
 import android.graphics.drawable.Drawable
-import android.os.Bundle
 import android.support.annotation.DrawableRes
 import android.support.annotation.StringRes
+import android.util.DisplayMetrics
+import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import cn.vove7.ctassistant.R
 
+/**
+ * Dialog with
+ * <include layout="@layout/dialog_header" />
+ * <include layout="@layout/dialog_footer" />
+ */
 open class BaseDialog(context: Context) : Dialog(context), DialogInterface {
 
     private lateinit var titleView: TextView
@@ -20,6 +26,10 @@ open class BaseDialog(context: Context) : Dialog(context), DialogInterface {
     private lateinit var buttonPositive: TextView
     private lateinit var buttonNegative: TextView
     private lateinit var buttonNeutral: TextView
+
+    var widthP: Double = 0.7
+    var heightP: Double = -1.0
+    var gravity: Int = Gravity.CENTER
 
     var title: String = ""
     var iconDrawable: Drawable? = null
@@ -110,7 +120,57 @@ open class BaseDialog(context: Context) : Dialog(context), DialogInterface {
             iconView.visibility = View.VISIBLE
             iconView.setImageDrawable(iconDrawable)
         }
+        onSetHeight()
+        onSetWidth()
+        window!!.setGravity(gravity)
     }
+
+    private fun onSetWidth() {
+        val m = window!!.windowManager
+        val d = m.defaultDisplay
+        val p = window!!.attributes
+        val metrics = DisplayMetrics()
+        d.getMetrics(metrics)
+        p.width = (metrics.widthPixels * widthP).toInt() //设置dialog的宽度为当前手机屏幕的宽度
+        window!!.attributes = p
+    }
+
+    private fun onSetHeight() {
+        if (heightP < 0)
+            return
+        val m = window!!.windowManager
+        val d = m.defaultDisplay
+        val p = window!!.attributes
+        val metrics = DisplayMetrics()
+        d.getMetrics(metrics)
+        val h = metrics.heightPixels
+        p.height = (h * heightP).toInt()
+        window!!.attributes = p
+    }
+
+    fun setWidth(f: Double) {
+        widthP = f
+    }
+
+    fun setHeight(f: Double) {
+        heightP = f
+    }
+
+    fun fullScreen() {
+        setWidth(1.0)
+        setHeight(0.94)
+        bottom()
+    }
+
+    fun bottom() {
+        gravity = Gravity.BOTTOM
+    }
+
+    fun top() {
+        gravity = Gravity.TOP
+    }
+
+
 }
 
 class ButtonModel(var whichButton: Int, var text: String, var lis: View.OnClickListener)

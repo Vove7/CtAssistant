@@ -9,7 +9,7 @@ import android.view.ViewGroup
 import android.widget.BaseAdapter
 import android.widget.TextView
 import cn.vove7.ctassistant.R
-import cn.vove7.ctassistant.openct.model.TimeTableNode
+import cn.vove7.ctassistant.cthelper.model.TimeTableNode
 
 class TimeTableNodeAdapter(val context: Context, private val timeTableNodes: MutableList<TimeTableNode>) : BaseAdapter() {
     private val inflater: LayoutInflater = LayoutInflater.from(context)

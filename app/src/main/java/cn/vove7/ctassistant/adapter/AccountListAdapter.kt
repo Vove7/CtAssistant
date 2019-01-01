@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import android.widget.BaseAdapter
 import android.widget.TextView
 import cn.vove7.ctassistant.R
-import cn.vove7.ctassistant.openct.model.CalendarAccount
+import cn.vove7.ctassistant.cthelper.model.CalendarAccount
 
 class AccountListAdapter(val context: Context, var accList: List<CalendarAccount>,
                          private val delListener: OnItemClickListener) : BaseAdapter() {

@@ -1,7 +1,7 @@
 package cn.vove7.ctassistant
 
 
-import cn.vove7.ctassistant.openct.utils.Utils.num2Zh
+import cn.vove7.ctassistant.cthelper.utils.Utils.num2Zh
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import java.io.File

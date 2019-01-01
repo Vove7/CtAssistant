@@ -1,7 +1,9 @@
-package cn.vove7.ctassistant.openct.adapter
+package cn.vove7.ctassistant.cthelper.adapter
 
 import android.content.Context
 import cn.vove7.ctassistant.R
+import cn.vove7.ctassistant.cthelper.model.*
+import cn.vove7.ctassistant.cthelper.utils.*
 import cn.vove7.ctassistant.events.ActionEvent.Companion.ACTION_ADD_EVENT
 import cn.vove7.ctassistant.events.ActionEvent.Companion.CODE_ADD_ACCOUNT_FAILED
 import cn.vove7.ctassistant.events.ActionEvent.Companion.CODE_FAILED
@@ -20,13 +22,11 @@ import cn.vove7.ctassistant.events.WhatRequest.WHAT_GET_SUPPORT_SCHOOLS
 import cn.vove7.ctassistant.events.WhatRequest.WHAT_GET_TIME_TABLE
 import cn.vove7.ctassistant.events.WhatRequest.WHAT_INIT_AY
 import cn.vove7.ctassistant.events.WhatRequest.WHAT_LOGIN
-import cn.vove7.ctassistant.openct.model.*
-import cn.vove7.ctassistant.openct.utils.*
 import com.google.gson.Gson
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.Response
-import org.litepal.crud.DataSupport
+import org.litepal.LitePal
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
@@ -37,14 +37,14 @@ import java.util.*
 class SchoolAdapter(private val context: Context) {
     var schCode: String? = null
     private var stuNo: String? = null
-    var dateOfBaseWeek: Calendar? = null
+    var dateOfBaseWeek: Calendar = Calendar.getInstance()
     var allAcademicYears: Array<AcademicYear>? = null
 
     private var password: String? = null
     var classInfoTable: Array<ClassInfo>? = null
     var timeTables = mutableListOf<TimeTable>()
     private val spUtil: SPUtil?
-    var selectAcademicYear: AcademicYear? = null
+    var selectAcademicYear: AcademicYear = AcademicYear(2017, 0, "20170")
 
     val baseWeekStr: String
         get() = dateOfBaseWeek!!.get(Calendar.YEAR).toString() + "-" +
@@ -65,7 +65,7 @@ class SchoolAdapter(private val context: Context) {
 
     fun initSupportSchools() {
         //
-        if (spUtil != null && spUtil.getBoolean(R.string.key_has_schools)) {
+        if (spUtil != null && spUtil.getBoolean(R.string.key_has_schools, false)) {
             readFromDatabase()
             sendNetEvent(WHAT_GET_SUPPORT_SCHOOLS, STATUS_OK, "STATUS_OK")
         } else {
@@ -75,31 +75,39 @@ class SchoolAdapter(private val context: Context) {
 
     private fun readFromDatabase() {
         supportSchools = HashMap()
-        val schools = DataSupport.findAll(School::class.java)
+        val schools = LitePal.findAll(School::class.java)
         for (school in schools) {
-            supportSchools!![school.getsName()] = school.getsCode()
+            val info = LitePal.where("school_id=?", school.id.toString()).findFirst(SchoolInfo::class.java)
+            supportSchools!![school.sName] = info
         }
-        VLog.d("加载学校数据完成 :", " from local ----> " + Gson().toJson(supportSchools))
+        Vog.d("加载学校数据完成 :", " from local ----> " + Gson().toJson(supportSchools))
     }
 
     fun requestSchools() {
         val call = HttpHelper.buildCall(UrlUtils.URL_GET_SUPPORT_SCHOOLS, null)
         call.enqueue(object : MyCallback(WHAT_GET_SUPPORT_SCHOOLS) {
             override fun onSuccess(data: String) {
-                val model = Gson().fromJson(data, SupportSchoolModel::class.java)
-                val status =
-                    if (model != null) {
-                        supportSchools = model.supportSchools
-                        SPUtil(context).setValue(R.string.key_has_schools, true)
-                        DataSupport.deleteAll(School::class.java)
-                        for ((key, value) in supportSchools!!) {
-                            School(key, value).save()
+                try {
+                    val model = Gson().fromJson(data, SupportSchoolModel::class.java)
+                    val status =
+                        if (model != null) {
+                            supportSchools = model.supportSchools
+                            SPUtil(context).setValue(R.string.key_has_schools, true)
+                            LitePal.deleteAll(School::class.java)
+                            LitePal.deleteAll(SchoolInfo::class.java)
+                            for ((key, value) in supportSchools!!) {
+                                School(key, value).save()
+                                value.save()
+                            }
+                            STATUS_OK
+                        } else {
+                            STATUS_SERVER_ERR
                         }
-                        STATUS_OK
-                    } else {
-                        STATUS_SERVER_ERR
-                    }
-                sendNetEvent(WHAT_GET_SUPPORT_SCHOOLS, status, "")
+                    sendNetEvent(WHAT_GET_SUPPORT_SCHOOLS, status)
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    sendNetEvent(WHAT_GET_SUPPORT_SCHOOLS, STATUS_FAILED, "发生错误")
+                }
             }
 
         })
@@ -223,7 +231,7 @@ class SchoolAdapter(private val context: Context) {
 
     fun requestClassTable() {
         val params = buildBaseParams()
-        params["semester"] = selectAcademicYear!!.code
+        params["semester"] = selectAcademicYear.code
 
         val call = HttpHelper.buildCall(UrlUtils.URL_GET_CT, params)
         call.enqueue(object : MyCallback(WHAT_GET_CLASS_TABLE) {
@@ -256,7 +264,7 @@ class SchoolAdapter(private val context: Context) {
     }
 
     val dateFormat = SimpleDateFormat()
-    fun add2Calendar() {
+    fun add2Calendar(isRemin: Boolean, isShowWeek: Boolean) {
         dateOfBaseWeek?.set(Calendar.HOUR, 0)
         if (classInfoTable == null) {
             postActionEvent(ACTION_ADD_EVENT, CODE_FAILED)
@@ -276,10 +284,10 @@ class SchoolAdapter(private val context: Context) {
         for (c in classInfoTable!!) {
             val cDay = Calendar.getInstance()//当前周日期
 
-            VLog.d(this, "添加课程 : ${c.className} - ${c.classRoom} 周${c.week}")
+            Vog.d(this, "添加课程 : ${c.className} - ${c.classRoom} 周${c.week}")
 
             for (w in c.weeks) {
-                cDay.time = dateOfBaseWeek!!.time
+                cDay.time = dateOfBaseWeek.time
                 cDay.add(Calendar.WEEK_OF_YEAR, w - 1)
                 cDay.add(Calendar.DAY_OF_WEEK, c.week - 1)//课当天
                 val timeTable = getTimeTable(cDay)//当天作息表
@@ -288,10 +296,11 @@ class SchoolAdapter(private val context: Context) {
 
                 val data = String.format("第%d周  %s-%s", w,
                         dateFormat.format(begin), dateFormat.format(end))
-                VLog.d(this, "时间信息 : $data")
+                Vog.d(this, "---- : $data")
 
-                if (calendarHelper.addCalendarEvent(calendarId, "${c.className}@${c.classRoom}"
-                                , c.teacher, begin, end, false) == CalendarHelper.RESULT_ADD_FAILED) {
+                if (calendarHelper.addCalendarEvent(calendarId,
+                                (if (isShowWeek) "[$w]" else "") + "${c.className}@${c.classRoom}"
+                                , c.teacher, begin, end, isRemin) == CalendarHelper.RESULT_ADD_FAILED) {
                     postActionEvent(ACTION_ADD_EVENT, CODE_FAILED)
                     return
                 }
@@ -303,14 +312,14 @@ class SchoolAdapter(private val context: Context) {
 
 
     companion object {
-        var supportSchools: MutableMap<String, String>? = null
+        var supportSchools: MutableMap<String, SchoolInfo>? = null
     }
 
 
     fun buildSummary(): String {
         val builder = StringBuilder()
         builder.append("学号：").appendln(stuNo)
-        builder.append("学期：").appendln(selectAcademicYear?.name)
+        builder.append("学期：").appendln(selectAcademicYear.name)
         builder.append("第一周周一：").appendln(baseWeekStr)
 
         return builder.toString()

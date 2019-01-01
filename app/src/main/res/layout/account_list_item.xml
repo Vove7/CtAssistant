@@ -6,7 +6,7 @@
     android:paddingEnd="10dp"
     android:paddingStart="10dp"
     android:orientation="horizontal"
-    android:padding="5dp">
+    android:padding="10dp">
 
     <TextView
         android:id="@+id/account_name"

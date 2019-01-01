@@ -2,7 +2,7 @@ package cn.vove7.ctassistant
 
 import android.support.test.InstrumentationRegistry
 import android.support.test.runner.AndroidJUnit4
-import cn.vove7.ctassistant.openct.utils.CalendarHelper
+import cn.vove7.ctassistant.cthelper.utils.CalendarHelper
 import org.junit.Test
 import org.junit.runner.RunWith
 

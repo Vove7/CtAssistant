@@ -1,4 +1,4 @@
-package cn.vove7.ctassistant.openct.utils
+package cn.vove7.ctassistant.cthelper.utils
 
 
 object Utils {

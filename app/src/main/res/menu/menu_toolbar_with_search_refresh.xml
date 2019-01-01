@@ -13,9 +13,8 @@
         app:actionViewClass="android.support.v7.widget.SearchView"
         app:showAsAction="collapseActionView|ifRoom" />
     <item
-        android:id="@+id/refresh_icon"
+        android:id="@+id/menu_refresh"
         android:icon="@drawable/ic_refresh_black_24dp"
         android:title="@string/text_refresh_data"
         app:showAsAction="always" />
-
 </menu>

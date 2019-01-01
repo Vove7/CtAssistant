@@ -4,7 +4,7 @@ import android.app.Application
 
 import org.litepal.LitePal
 
-import cn.vove7.ctassistant.openct.adapter.SchoolAdapter
+import cn.vove7.ctassistant.cthelper.adapter.SchoolAdapter
 
 class VApplication : Application() {
 

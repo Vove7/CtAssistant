@@ -50,18 +50,18 @@ class MainActivity : AppCompatActivity() {
 
     private fun initView() {
         viewPager = findViewById(R.id.view_pager)
-        viewPager?.setBackgroundColor(`$`(colors[0]))
+        viewPager?.setBackgroundColor(c(colors[0]))
         //viewPager.setOnTouchListener((view, motionEvent) -> true);
 
         viewPager?.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
             override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
 
                 val evaluator = ArgbEvaluator() // ARGB求值器
-                var evaluate = `$`(colors[position]) // 初始默认颜色
+                var evaluate = c(colors[position]) // 初始默认颜色
 
                 if (position < colors.size - 1) {
                     evaluate = evaluator// 根据positionOffset和第pos页~第pos+1页的颜色转换范围取颜色值
-                            .evaluate(positionOffset, `$`(colors[position]), `$`(colors[position + 1])) as Int
+                            .evaluate(positionOffset, c(colors[position]), c(colors[position + 1])) as Int
                 }
                 viewPager?.setBackgroundColor(evaluate) // 为ViewPager的父容器设置背景色
             }
@@ -80,7 +80,7 @@ class MainActivity : AppCompatActivity() {
         super.onBackPressed()
     }
 
-    private fun `$`(cId: Int): Int = resources.getColor(cId)
+    private fun c(cId: Int): Int = resources.getColor(cId)
 
     private fun requestPermission() {
         val needRequest = ArrayList<String>()

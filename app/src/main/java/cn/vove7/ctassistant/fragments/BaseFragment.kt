@@ -7,7 +7,6 @@ import android.support.design.widget.Snackbar
 import android.support.v4.app.Fragment
 import android.support.v4.view.ViewPager
 import android.support.v7.widget.Toolbar
-import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,7 +17,7 @@ import cn.vove7.ctassistant.adapter.BottomListAdapter
 import cn.vove7.ctassistant.events.ActionEvent
 import cn.vove7.ctassistant.events.NetEvent
 import cn.vove7.ctassistant.interfaces.OnBottomItemClickListener
-import cn.vove7.ctassistant.openct.adapter.SchoolAdapter
+import cn.vove7.ctassistant.cthelper.adapter.SchoolAdapter
 import cn.vove7.ctassistant.view.VToast
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe

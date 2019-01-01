@@ -1,4 +1,4 @@
-package cn.vove7.ctassistant.openct.utils
+package cn.vove7.ctassistant.cthelper.utils
 
 import android.util.Log
 import cn.vove7.ctassistant.events.NetEvent
@@ -27,12 +27,12 @@ object HttpHelper {
 
 open class MyCallback(val what: Int) : Callback {
     open fun onFailed(call: Call?, message: String) {
-        VLog.e(this, message)
+        Vog.e(this, message)
         EventBus.getDefault().post(NetEvent(what, STATUS_NET_ERR, message))
     }
 
     fun callFailed(e: String) {
-        VLog.e(this, e)
+        Vog.e(this, e)
         EventBus.getDefault().post(NetEvent(what, STATUS_PARSE_ERR, e))
     }
 
@@ -45,6 +45,12 @@ open class MyCallback(val what: Int) : Callback {
             onFailure(call, IOException("response null"))
             return
         }
+        val code = response.code()
+        if (code !in 200..299) {
+            Log.d("Debug :", "onResponse  ----> ${response.body()?.string()}")
+            onFailed(call, "return code :$code")
+            return
+        }
         val body = response.body()
         if (body == null) {
             Log.d(this.javaClass.name, "onResponse: body is null")
@@ -52,7 +58,7 @@ open class MyCallback(val what: Int) : Callback {
             return
         }
         val data = body.string()
-        VLog.d(this, data)
+        Vog.d(this, data)
         onSuccess(data)
     }
 

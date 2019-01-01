@@ -18,9 +18,9 @@ import cn.vove7.ctassistant.events.ActionEvent.Companion.ACTION_SUMMARY
 import cn.vove7.ctassistant.events.EventUtils.postActionEvent
 import cn.vove7.ctassistant.events.NetEvent
 import cn.vove7.ctassistant.events.WhatRequest.WHAT_GET_TIME_TABLE
-import cn.vove7.ctassistant.openct.model.Time
-import cn.vove7.ctassistant.openct.model.TimeTable
-import cn.vove7.ctassistant.openct.model.TimeTableNode
+import cn.vove7.ctassistant.cthelper.model.Time
+import cn.vove7.ctassistant.cthelper.model.TimeTable
+import cn.vove7.ctassistant.cthelper.model.TimeTableNode
 import java.util.*
 
 

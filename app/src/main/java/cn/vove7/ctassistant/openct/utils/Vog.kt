@@ -3,7 +3,7 @@ package cn.vove7.ctassistant.openct.utils
 import android.util.Log
 import com.google.gson.Gson
 
-object VLog {
+object Vog {
     private const val v = 0
     private const val d = 1
     private const val i = 2

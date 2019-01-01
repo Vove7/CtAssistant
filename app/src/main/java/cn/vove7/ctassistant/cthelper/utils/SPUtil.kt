@@ -1,4 +1,4 @@
-package cn.vove7.ctassistant.openct.utils
+package cn.vove7.ctassistant.cthelper.utils
 
 import android.content.Context
 import android.content.SharedPreferences
@@ -24,8 +24,8 @@ class SPUtil(private val context: Context) {
      * @param keyId @StringRes keyId
      * @return false when have no this keyValue
      */
-    fun getBoolean(@StringRes keyId: Int): Boolean {
-        return preferences.getBoolean(s(keyId), false)
+    fun getBoolean(@StringRes keyId: Int,d:Boolean): Boolean {
+        return preferences.getBoolean(s(keyId), d)
     }
 
     fun setValue(@StringRes keyId: Int, value: Any) {
@@ -47,7 +47,7 @@ class SPUtil(private val context: Context) {
         } else if (value is Set<*>) {
             editor.putStringSet(key, value as Set<String>)
         } else {
-            VLog.e(this, "设置值类型出错 key: $key")
+            Vog.e(this, "设置值类型出错 key: $key")
         }
         editor.apply()
 

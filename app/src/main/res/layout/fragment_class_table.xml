@@ -17,19 +17,56 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
-
             <TextView
                 android:id="@+id/summary"
                 android:layout_width="match_parent"
-                android:maxHeight="300dp"
                 android:layout_height="wrap_content" />
 
+            <com.bin.david.form.core.SmartTable
+                android:id="@+id/classTable"
+                android:layout_width="match_parent"
+                android:layout_weight="1"
+                android:layout_height="0dp" />
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <CheckBox
+                    android:id="@+id/is_remind"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="提醒(前10分钟)" />
+
+                <CheckBox
+                    android:id="@+id/is_show_week"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="显示周数" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="预览:" />
+
+                <TextView
+                    android:id="@+id/preview"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
 
             <Button
                 android:id="@+id/add2Calendar"
-                android:text="@string/text_export_to_calendar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:text="@string/text_export_to_calendar"
                 android:theme="@style/MaterialButton" />
 
 

@@ -41,11 +41,10 @@
                     android:id="@+id/school_text"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginTop="16dp"
+                    android:padding="8dp"
+                    android:layout_marginTop="8dp"
                     android:background="?android:attr/selectableItemBackground"
-                    android:layout_marginEnd="8dp"
-                    android:layout_marginBottom="27dp"
+                    android:layout_marginBottom="10dp"
                     android:focusedByDefault="true"
                     android:text="@string/text_choose_school" />
 
@@ -59,7 +58,7 @@
                     app:met_primaryColor="?android:textColorPrimary"
                     android:ems="10"
                     app:met_floatingLabel="normal"
-                    android:text="" />
+                    android:text="@string/tsno" />
 
                 <com.rengwuxian.materialedittext.MaterialEditText
                     android:id="@+id/text_pa"
@@ -71,8 +70,12 @@
                     android:ems="10"
                     app:met_floatingLabel="normal"
                     android:inputType="textPassword"
-                    android:text="" />
+                    android:text="@string/tpass" />
 
+                <TextView
+                    android:id="@+id/hint"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
