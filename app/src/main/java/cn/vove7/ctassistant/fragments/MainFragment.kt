@@ -2,10 +2,8 @@ package cn.vove7.ctassistant.fragments
 
 
 import android.annotation.SuppressLint
-import android.app.AlertDialog
 import android.app.ProgressDialog
 import android.content.Context
-import android.content.DialogInterface
 import android.os.Handler
 import android.support.design.widget.BottomSheetBehavior
 import android.support.v4.view.MenuItemCompat
@@ -16,8 +14,6 @@ import android.view.View
 import android.widget.EditText
 import android.widget.TextView
 import cn.vove7.ctassistant.R
-import cn.vove7.ctassistant.adapter.AccountListAdapter
-import cn.vove7.ctassistant.dialog.DialogWithList
 import cn.vove7.ctassistant.events.ActionEvent
 import cn.vove7.ctassistant.events.ActionEvent.Companion.ACTION_INIT_AY
 import cn.vove7.ctassistant.events.EventUtils.postActionEvent
@@ -26,8 +22,6 @@ import cn.vove7.ctassistant.events.StatusCodes
 import cn.vove7.ctassistant.events.WhatRequest.WHAT_GET_SUPPORT_SCHOOLS
 import cn.vove7.ctassistant.events.WhatRequest.WHAT_LOGIN
 import cn.vove7.ctassistant.openct.adapter.SchoolAdapter
-import cn.vove7.ctassistant.openct.model.CalendarAccount
-import cn.vove7.ctassistant.openct.utils.CalendarHelper
 import cn.vove7.ctassistant.openct.utils.SPUtil
 import cn.vove7.ctassistant.openct.utils.VLog
 import java.util.*
@@ -104,7 +98,7 @@ class MainFragment constructor(context: Context, viewPager: ViewPager)
     }
 
     private fun querySchool(query: String) {
-        val schools = ArrayList(SchoolAdapter.supportSchools!!.keys)
+        val schools = ArrayList((SchoolAdapter.supportSchools?: hashMapOf()).keys)
         var result = ArrayList<String>()
         if (query.trim { it <= ' ' } == "") {
             result = schools
@@ -124,6 +118,10 @@ class MainFragment constructor(context: Context, viewPager: ViewPager)
                 changeBottomLayout(SHOW_PROCESS)
                 Handler().postDelayed(
                         { schoolAdapter.requestSchools() }, 500)
+            }
+            R.id.applyAdapter->{
+               // Toast.makeText(VApplication.instance.applicationContext,"applyAdapter", Toast.LENGTH_SHORT).show();
+                startActivity(Intent(VApplication.instance.applicationContext, ApplyAdapterActivity::class.java))
             }
         }
         return super.onOptionsItemSelected(item)
