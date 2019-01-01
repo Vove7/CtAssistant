@@ -338,7 +338,7 @@ class SchoolAdapter(private val context: Context) {
                 return timeTables[(index + size - 1) % size].nodeList
             }
         }
-        return null
+        return timeTables[size - 1].nodeList
     }
 
     fun getAyPosition(): Int {
