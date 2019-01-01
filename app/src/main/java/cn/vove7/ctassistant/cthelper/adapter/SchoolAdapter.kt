@@ -47,9 +47,9 @@ class SchoolAdapter(private val context: Context) {
     var selectAcademicYear: AcademicYear = AcademicYear(2017, 0, "20170")
 
     val baseWeekStr: String
-        get() = dateOfBaseWeek!!.get(Calendar.YEAR).toString() + "-" +
-                (dateOfBaseWeek!!.get(Calendar.MONTH) + 1) + "-" +
-                dateOfBaseWeek!!.get(Calendar.DAY_OF_MONTH)
+        get() = dateOfBaseWeek.get(Calendar.YEAR).toString() + "-" +
+                (dateOfBaseWeek.get(Calendar.MONTH) + 1) + "-" +
+                dateOfBaseWeek.get(Calendar.DAY_OF_MONTH)
 
     init {
         spUtil = SPUtil(context)
@@ -183,7 +183,7 @@ class SchoolAdapter(private val context: Context) {
 
     fun requestBaseWeek() {
         val params = buildBaseParams()
-        params["semester"] = selectAcademicYear!!.code
+        params["semester"] = selectAcademicYear.code
 
         val call = HttpHelper.buildCall(UrlUtils.URL_GET_BASE_WEEK, params)
         call.enqueue(object : MyCallback(WHAT_GET_BASE_WEEK) {
@@ -265,7 +265,7 @@ class SchoolAdapter(private val context: Context) {
 
     val dateFormat = SimpleDateFormat()
     fun add2Calendar(isRemin: Boolean, isShowWeek: Boolean) {
-        dateOfBaseWeek?.set(Calendar.HOUR, 0)
+        dateOfBaseWeek.set(Calendar.HOUR, 0)
         if (classInfoTable == null) {
             postActionEvent(ACTION_ADD_EVENT, CODE_FAILED)
             return
@@ -290,7 +290,9 @@ class SchoolAdapter(private val context: Context) {
                 cDay.time = dateOfBaseWeek.time
                 cDay.add(Calendar.WEEK_OF_YEAR, w - 1)
                 cDay.add(Calendar.DAY_OF_WEEK, c.week - 1)//课当天
+                Vog.d(this,"add2Calendar ---> $cDay")
                 val timeTable = getTimeTable(cDay)//当天作息表
+                Vog.d(this,"add2Calendar ---> $timeTable")
                 val begin = cDay.time.time + timeTable!![c.node[0]].beginMillis
                 val end = cDay.time.time + timeTable[c.node[c.node.size - 1]].endMillis
 
@@ -312,7 +314,7 @@ class SchoolAdapter(private val context: Context) {
 
 
     companion object {
-        var supportSchools: MutableMap<String, SchoolInfo>? = null
+        var supportSchools: MutableMap<String, SchoolInfo> = hashMapOf()
     }
 
 
@@ -327,8 +329,6 @@ class SchoolAdapter(private val context: Context) {
 
     //根据日期选择作息表
     private fun getTimeTable(date: Calendar): MutableList<TimeTableNode>? {
-//        val cDate = Calendar.getInstance()
-//        cDate.time = date.time
         val size = timeTables.size
         if (size == 1)
             return timeTables[0].nodeList

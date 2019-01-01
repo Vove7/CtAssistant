@@ -32,7 +32,7 @@ import cn.vove7.ctassistant.events.NetEvent
 import cn.vove7.ctassistant.events.StatusCodes
 import cn.vove7.ctassistant.events.WhatRequest.WHAT_GET_SUPPORT_SCHOOLS
 import cn.vove7.ctassistant.events.WhatRequest.WHAT_LOGIN
-import java.util.*
+import kotlinx.android.synthetic.main.fragment_select_school.*
 
 /**
  * Choose school,login
@@ -43,6 +43,7 @@ class MainFragment constructor(context: Context, viewPager: ViewPager)
     private lateinit var textSno: EditText
     private lateinit var textPass: EditText
     private lateinit var schoolText: TextView
+    private lateinit var hintText: TextView
     private lateinit var searchView: SearchView
 
     private var spUtil: SPUtil = SPUtil(context)
@@ -51,6 +52,9 @@ class MainFragment constructor(context: Context, viewPager: ViewPager)
     //学校点击
     override fun onItemClick(pos: Int, content: String) {
         setSchoolText(content)
+        val tips = SchoolAdapter.supportSchools[content]?.hintMessage
+        hintText.text = tips //提示
+        spUtil.setValue("hint", tips ?: "")
         hideBottom()
     }
 
@@ -67,6 +71,7 @@ class MainFragment constructor(context: Context, viewPager: ViewPager)
         textPass = f(R.id.text_pa)
         textPass.onFocusChangeListener = this
         schoolText = f(R.id.school_text)
+        hintText = f(R.id.hint)
         schoolText.setOnClickListener(this)
         f<View>(R.id.btn_signin).setOnClickListener(this)
         f<View>(R.id.show_account).setOnClickListener(this)
@@ -87,7 +92,7 @@ class MainFragment constructor(context: Context, viewPager: ViewPager)
         })
 
         bottomToolbar.inflateMenu(R.menu.menu_toolbar_with_search_refresh)
-        bottomToolbar.setOnMenuItemClickListener({ this.onOptionsItemSelected(it) })
+        bottomToolbar.setOnMenuItemClickListener { this.onOptionsItemSelected(it) }
         val searchItem = bottomToolbar.menu.findItem(R.id.search)
         searchView = MenuItemCompat.getActionView(searchItem) as SearchView
         searchView.queryHint = "查找学校"
@@ -106,7 +111,7 @@ class MainFragment constructor(context: Context, viewPager: ViewPager)
     }
 
     private fun querySchool(query: String) {
-        val schools = ArrayList((SchoolAdapter.supportSchools?: hashMapOf()).keys)
+        val schools = ArrayList(SchoolAdapter.supportSchools.keys)
         var result = ArrayList<String>()
         if (query.trim { it <= ' ' } == "") {
             result = schools
@@ -128,8 +133,8 @@ class MainFragment constructor(context: Context, viewPager: ViewPager)
                         { schoolAdapter.requestSchools() }, 500)
                 return true
             }
-            R.id.applyAdapter->{
-               // Toast.makeText(VApplication.instance.applicationContext,"applyAdapter", Toast.LENGTH_SHORT).show();
+            R.id.applyAdapter -> {
+                // Toast.makeText(VApplication.instance.applicationContext,"applyAdapter", Toast.LENGTH_SHORT).show();
                 startActivity(Intent(VApplication.instance.applicationContext, ApplyAdapterActivity::class.java))
             }
         }
@@ -142,6 +147,7 @@ class MainFragment constructor(context: Context, viewPager: ViewPager)
         schoolAdapter.initSupportSchools()
         val schName = spUtil.getString(R.string.key_old_school)
         setSchoolText(schName ?: return)
+        hintText.text = spUtil.getString("hint") ?: ""
     }
 
     private fun login() {
@@ -244,9 +250,9 @@ class MainFragment constructor(context: Context, viewPager: ViewPager)
             }
             WHAT_GET_SUPPORT_SCHOOLS -> {
                 if (event.statusCode == StatusCodes.STATUS_OK) {
-                    Vog.d(this, "onRequestSuccess: 学校获取ok -> " + SchoolAdapter.supportSchools!!)
-                    val schools = ArrayList(SchoolAdapter.supportSchools!!.keys)
-                    setBottomListData(schools)
+                    Vog.d(this, "onRequestSuccess: 学校获取ok -> " + SchoolAdapter.supportSchools)
+                    schools = ArrayList(SchoolAdapter.supportSchools.keys)
+                    setBottomListData(schools ?: ArrayList())
                     changeBottomLayout(SHOW_LIST)
                 } else {
                     Vog.d(this, "onRequestFailed: 学校获取失败")
@@ -256,9 +262,11 @@ class MainFragment constructor(context: Context, viewPager: ViewPager)
         }
     }
 
+    var schools: ArrayList<String>? = null
+
 
     private fun setSchoolText(name: String) {
-        val schCode = SchoolAdapter.supportSchools!![name]?.schoolCode ?: ""
+        val schCode = SchoolAdapter.supportSchools[name]?.schoolCode ?: ""
         Vog.d(this, "school code: -->$schCode")
 
         spUtil.setValue(R.string.key_old_school, name)

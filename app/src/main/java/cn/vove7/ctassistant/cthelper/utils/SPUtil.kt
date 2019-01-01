@@ -20,6 +20,10 @@ class SPUtil(private val context: Context) {
         return preferences.getString(s(keyId), null)
     }
 
+    fun getString(key: String): String? {
+        return preferences.getString(key, null)
+    }
+
     /**
      * @param keyId @StringRes keyId
      * @return false when have no this keyValue
@@ -32,7 +36,7 @@ class SPUtil(private val context: Context) {
         setValue(s(keyId), value)
     }
 
-    private fun setValue(key: String, value: Any) {
+    fun setValue(key: String, value: Any) {
         val editor = preferences.edit()
         if (value is Boolean) {
             editor.putBoolean(key, value)

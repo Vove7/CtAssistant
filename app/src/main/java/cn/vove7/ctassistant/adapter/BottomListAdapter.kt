@@ -19,7 +19,7 @@ class BottomListAdapter(private val items: ArrayList<String>, private val listen
         }
         val textView: TextView = v!!.findViewById(R.id.school_name)
         textView.text = getItem(pos)
-        v.setOnClickListener { _ -> listener.onItemClick(pos, getItem(pos)) }
+        v.setOnClickListener { listener.onItemClick(pos, getItem(pos)) }
         return v
     }
 
